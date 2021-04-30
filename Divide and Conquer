@@ -1,0 +1,53 @@
+import time
+import numpy as np
+import tracemalloc
+start = time.time()
+tracemalloc.start()
+Input = np.random.randint(-99, 99, (100000)) # Change last value for different size
+q = Input
+endIndex = len(Input)-1
+#recursive function to find the maximum contiguous subarray
+def FindMaxSubarray(Input, low, high):
+    mid = (low + high) // 2 
+    if high == low:    
+        return low, high, Input[low]  
+    left_L, left_H, left_S = FindMaxSubarray(Input, low, mid) 
+    right_L, rightHigh, right_S = FindMaxSubarray(Input, mid+1, high) 
+    cross_L, cross_H, cross_S = FindMaxCrossingSubarray(Input, low, mid, high) 
+    if left_S >= right_S and left_S >= cross_S :
+        return left_L, left_H, left_S
+    elif right_S >= left_S and right_S >= cross_S :
+        return right_L, rightHigh, right_S
+    else :
+        return cross_L, cross_H, cross_S
+#function to find maximum sum of mid-crossing subarrays
+def FindMaxCrossingSubarray(Input, low, mid, high):
+    #set default values for the left side
+    left_S = -10000 
+    max_L = 0
+    total_S = 0                          
+    #find the max sum to the left
+    for i in range(mid, low-1, -1) :    
+        total_S = total_S + Input[i]            
+        if total_S > left_S :            
+            left_S = total_S             
+            max_L = i                 
+    #set default values for the right side
+    right_S = -10000
+    max_R = 0
+    total_S = 0        
+    #find the max sum to the right         
+    for j in range(mid+1, high+1) :   
+        total_S = total_S + Input[j]        
+        if total_S > right_S :       
+            right_S = total_S        
+            max_R = j            
+    crossarraySum = left_S + right_S  
+    return max_L, max_R, crossarraySum  
+subarrayStartIndex, subarrayEndIndex, subarraySum = FindMaxSubarray(Input, startIndex, endIndex)
+print ("The subarray is", Input[subarrayStartIndex:subarrayEndIndex+1], "and has a sum of", subarraySum)
+end = time.time()
+print("Execution time: ", end - start)
+current, peak = tracemalloc.get_traced_memory()
+print(f"Current memory usage is {current / 10**6} MB and the peak was {peak / 10**6} MB")
+tracemalloc.stop() 
