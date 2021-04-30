@@ -1,0 +1,30 @@
+import time
+import numpy as np
+import tracemalloc
+
+start = time.time()
+tracemalloc.start()
+Input = q
+def FindMaxSubarray(Input, size): 
+    maxSum = -99 #set very small value
+    currentMaxSum = 0
+    start = 0
+    end = 0
+    s = 0
+    for i in range(0, size) : 
+        currentMaxSum += Input[i] 
+        if maxSum < currentMaxSum : 
+            maxSum = currentMaxSum 
+            start = s #set the start index to the current subarrays start index as defined in line 28
+            end = i 
+        if currentMaxSum < 0 :
+            currentMaxSum = 0 
+            s = i+1 
+    return start, end, maxSum
+startIndex, endIndex, subarraySum = FindMaxSubarray(Input,len(Input))
+print ("The subarray is", Input[startIndex:endIndex+1], "and has a sum of", subarraySum)
+end = time.time()
+print("Execution time: ", end - start)
+current, peak = tracemalloc.get_traced_memory()
+print(f"Current memory usage is {current / 10**6} MB and the peak was {peak / 10**6} MB")
+tracemalloc.stop() 
